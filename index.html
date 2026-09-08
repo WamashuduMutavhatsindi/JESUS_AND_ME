@@ -368,6 +368,41 @@
             padding: 10px 20px 60px;
         }
 
+        /* wrapper gives the halo room to breathe without affecting layout */
+        .cta-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* soft blurred halo sitting behind the button, pulsing */
+        .cta-wrap::before {
+            content: "";
+            position: absolute;
+            inset: -14px;
+            border-radius: 60px;
+            background: radial-gradient(circle, rgba(63, 232, 234, 0.55), rgba(63, 232, 234, 0) 70%);
+            filter: blur(16px);
+            z-index: 0;
+            animation: haloPulse 2.6s ease-in-out infinite;
+            transition: background 0.3s ease;
+        }
+
+        .cta-wrap.clicked::before {
+            background: radial-gradient(circle, rgba(244, 229, 35, 0.6), rgba(244, 229, 35, 0) 70%);
+        }
+
+        @keyframes haloPulse {
+            0%,
+            100% {
+                opacity: 0.55;
+                transform: scale(0.94);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.12);
+            }
+        }
+
         .cta-btn {
             display: inline-block;
             font-family: 'Anton', sans-serif;
@@ -378,13 +413,50 @@
             padding: 16px 44px;
             border-radius: 50px;
             text-decoration: none;
-            box-shadow: 0 8px 0 #0f6b6d, 0 18px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 0 #0f6b6d, 0 18px 30px rgba(0, 0, 0, 0.4), 0 0 22px rgba(63, 232, 234, 0.55);
             transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
             cursor: pointer;
             border: none;
             position: relative;
             user-select: none;
             min-width: 220px;
+            overflow: hidden;
+            z-index: 1;
+            animation: ctaGlow 2.6s ease-in-out infinite;
+        }
+
+        /* moving sheen sweeping across the button, like a light catching glass */
+        .cta-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+            transform: skewX(-20deg);
+            animation: ctaSheen 3.2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes ctaSheen {
+            0% {
+                left: -60%;
+            }
+            45%,
+            100% {
+                left: 130%;
+            }
+        }
+
+        @keyframes ctaGlow {
+            0%,
+            100% {
+                box-shadow: 0 8px 0 #0f6b6d, 0 18px 30px rgba(0, 0, 0, 0.4), 0 0 18px rgba(63, 232, 234, 0.45), 0 0 4px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 0 #0f6b6d, 0 18px 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(63, 232, 234, 0.9), 0 0 12px rgba(255, 255, 255, 0.5);
+            }
         }
 
         .cta-btn:hover {
@@ -400,7 +472,17 @@
         .cta-btn.clicked {
             background: linear-gradient(160deg, var(--yellow), #d4c81a);
             color: var(--navy-deep);
-            box-shadow: 0 8px 0 #a89b0e, 0 18px 30px rgba(0, 0, 0, 0.4);
+            animation: ctaGlowGold 2.6s ease-in-out infinite;
+        }
+
+        @keyframes ctaGlowGold {
+            0%,
+            100% {
+                box-shadow: 0 8px 0 #a89b0e, 0 18px 30px rgba(0, 0, 0, 0.4), 0 0 18px rgba(244, 229, 35, 0.5), 0 0 4px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 0 #a89b0e, 0 18px 30px rgba(0, 0, 0, 0.4), 0 0 42px rgba(244, 229, 35, 0.95), 0 0 12px rgba(255, 255, 255, 0.5);
+            }
         }
 
         .cta-btn.clicked:hover {
@@ -601,7 +683,9 @@
         </section>
 
         <section class="cta-section">
-            <button class="cta-btn" id="ctaBtn">Click I'll Be There!</button>
+            <div class="cta-wrap" id="ctaWrap">
+                <button class="cta-btn" id="ctaBtn">Click I'll Be There!</button>
+            </div>
             <div class="cta-feedback" id="ctaFeedback"></div>
             <div class="cta-hint">Bring a friend — come expecting Jesus to meet you there.</div>
             <button class="invite-btn" id="inviteBtn">
@@ -649,6 +733,7 @@
 
         // ---- "CLICK I'LL BE THERE!" BUTTON ----
         const ctaBtn = document.getElementById('ctaBtn');
+        const ctaWrap = document.getElementById('ctaWrap');
         const ctaFeedback = document.getElementById('ctaFeedback');
         let clickCount = 0;
 
@@ -698,6 +783,7 @@
 
             // Toggle clicked state
             this.classList.add('clicked');
+            ctaWrap.classList.add('clicked');
 
             // Show feedback with a fun message
             const messages = [
@@ -757,3 +843,4 @@
 
 </body>
 </html>
+       
